@@ -20,18 +20,23 @@ class DrawBond:
 
 		self.press=False
 
-		for atom in self.atomlist:
-			atom.disconnect_edit()
 
-		self.connect()
+		#self.connect()
 
 	def connect(self):
+		for atom in self.atomlist:
+			atom.disconnect_edit()
 		self.cidclick=self.ax.figure.canvas.mpl_connect(
 				"button_press_event", self.onclick)
 		self.cidmotion=self.ax.figure.canvas.mpl_connect(
 				"motion_notify_event", self.onmotion)
 		self.cidrelease=self.ax.figure.canvas.mpl_connect(
 				"button_release_event", self.onrelease)
+
+	def disconnect(self):
+		self.ax.figure.canvas.mpl_disconnect(self.cidclick)
+		self.ax.figure.canvas.mpl_disconnect(self.cidmotion)
+		self.ax.figure.canvas.mpl_disconnect(self.cidrelease)
 
 	def angle(self, p0, p1, p2):
 		v0 = np.array(p0) - np.array(p1)
@@ -100,9 +105,11 @@ class DrawBond:
 	def onrelease(self, event):
 		if self.sourceAtom is None:
 			self.sourceAtom=Atom(self.ax, self.sourcePoint, 0.01)
+			self.sourceAtom.disconnect_edit()
 			self.atomlist.append(self.sourceAtom)
 		if self.endAtom is None:
 			self.endAtom=Atom(self.ax, self.endPoint, 0.01)
+			self.endAtom.disconnect_edit()
 			self.atomlist.append(self.endAtom)
 		self.tempLine.remove()
 		b=Bond(self.ax, self.sourceAtom, self.endAtom)

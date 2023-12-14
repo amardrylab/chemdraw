@@ -13,7 +13,7 @@ class Atom(Circle):
 		self.connect_edit()
 		self.set_fc("red")
 		self.startmove=None
-		self.disconnect_edit()
+		#self.disconnect_edit()
 
 
 	def connect(self):
