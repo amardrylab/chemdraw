@@ -4,6 +4,8 @@ class DeleteBond:
 		self.atomlist=atomlist
 		self.bondlist=bondlist
 
+		self.connect()
+		self.disconnect()
 
 	def connect(self):
 		for atom in self.atomlist:

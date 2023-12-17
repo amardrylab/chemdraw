@@ -21,7 +21,8 @@ class DrawBond:
 		self.press=False
 
 
-		#self.connect()
+		self.connect()
+		self.disconnect()
 
 	def connect(self):
 		for atom in self.atomlist:

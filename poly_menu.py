@@ -1,84 +1,61 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.patches import RegularPolygon
 from matplotlib.widgets import Button
-from draw_class import DrawPoly
-from rearrange_class import DragParticle
+from drawbond import DrawBond
+from deletebond import DeleteBond
+from inserttext import InsertText
 
-elements=[]
-eventlist=[]
-elementlist=[]
-sid=None
-poly=None
-hotspot=None
+a=[]
+b=[]
+c=[]
 
-def create_circle(event):
-	global sid
-	if event.inaxes:
-		circle=plt.Circle((event.xdata, event.ydata), radius=0.05)
-		circle.set_fc('white')
-		circle.set_ec('black')
-		ax.add_patch(circle)
-		fig.canvas.draw()
-	fig.canvas.mpl_disconnect(sid)
+def disconnectAll():
+	global a
+	for atom in a:
+		atom.disconnect_edit()
+	db.disconnect()
+	dl.disconnect()
+	it.disconnect()
 
-def make_arrange(event):
-	global elementlist
-	for element in elementlist:
-		dp=DragParticle(element)
-		dp.connect()
-		eventlist.append(dp)
 
-def draw_circle(event):
-	global sid
-	sid=fig.canvas.mpl_connect('button_press_event', create_circle)
+def editbond(event):
+	global a
+	disconnectAll()
+	for atom in a:
+		atom.connect_edit()
 
-def draw_square(event):
-	global poly
-	poly=DrawPoly(ax,eventlist, elementlist, arms=4)
+def drawbond(event):
+	disconnectAll()
+	db.connect()
 
-def draw_hexagon(event):
-	global poly
-	poly=DrawPoly(ax,eventlist, elementlist, arms=6)
+def inserttext(event):
+	disconnectAll()
+	it.connect()
 
-def draw_line(event):
-	global poly
-	poly=DrawPoly(ax, eventlist, elementlist, arms=2)
-
-def clear_all(event):
-	global sid
-	ax.clear()
-	ax.set_xticks([])
-	ax.set_yticks([])
-	elements=[]
-	fig.canvas.draw()
-
-def find_hotspot(event):
-	return
+def deletebond(event):
+	disconnectAll()
+	dl.connect()
 
 fig,ax=plt.subplots()
+ax.set_fc("black")
+fig.set_facecolor("black")
 ax.set_xticks([])
 ax.set_yticks([])
 
-arrangeButton=Button(plt.axes([0.02,0.83,0.1,0.05]),"Arrange")
-arrangeButton.on_clicked(lambda event: make_arrange(event))
-
-circleButton=Button(plt.axes([0.02,0.75,0.1,0.05]),"Circle")
-circleButton.on_clicked(lambda event: draw_circle(event))
-
-clearButton=Button(plt.axes([0.02,0.67, 0.1,0.05]),"Clear All")
-clearButton.on_clicked(lambda event: clear_all(event))
+db=DrawBond(ax, a, b)
+it=InsertText(ax,c)
+dl=DeleteBond(ax, a, b)
 
 
-squareButton=Button(plt.axes([0.02,0.59,0.1,0.05]),"Square")
-squareButton.on_clicked(lambda event: draw_square(event))
+EditButton=Button(plt.axes([0.02,0.83,0.1,0.05]),"Edit")
+EditButton.on_clicked(lambda event: editbond(event))
 
-hexButton=Button(plt.axes([0.02, 0.50, 0.1, 0.05]), "Hexagon")
-hexButton.on_clicked(lambda event: draw_hexagon(event))
+BondButton=Button(plt.axes([0.02,0.75,0.1,0.05]),"Bond")
+BondButton.on_clicked(lambda event: drawbond(event))
 
-lineButton=Button(plt.axes([0.02, 0.41, 0.1, 0.05]), "Line")
-lineButton.on_clicked(lambda event: draw_line(event))
+TextButton=Button(plt.axes([0.02, 0.67, 0.1, 0.05]), "Text")
+TextButton.on_clicked(lambda event: inserttext(event))
 
-fig.canvas.mpl_connect("on_notify_event", find_hotspot)
+DeleteButton=Button(plt.axes([0.02, 0.59, 0.1, 0.05]), "Delete")
+DeleteButton.on_clicked(lambda event: deletebond(event))
 
 plt.show()
